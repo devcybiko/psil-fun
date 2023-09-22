@@ -13,6 +13,7 @@ const path = require("path");
 
 let DEBUG = false;
 let INFO = false;
+let TRACE = true;
 
 function info() {
     if (INFO) console.log("info", ...arguments);
@@ -20,6 +21,11 @@ function info() {
 function debug() {
     if (DEBUG) console.log("debug:", ...arguments);
 }
+
+function trace() {
+    if (TRACE) console.log("trace:", ...arguments);
+}
+
 function print() {
     console.log(...arguments);
 }
@@ -29,6 +35,17 @@ function die() {
     process.exit(1);
 }
 
+function equals(a,b) {
+    if (typeof(a) !== typeof(b)) return false;
+    if (typeof(a) === "object") {
+        if (a.length !== b.length) return false;
+        for (let i = 0; i < a.length; i++) {
+            if (!equals(a[i], b[i])) return false;
+        }
+        return true;
+    }
+    return a === b;
+}
 
 const NON_TERMINALS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.";
 const SPACES = " \t\n\r";
@@ -45,12 +62,12 @@ const OPERATIONS = {
     "%": mod,
     "++": incr,
     "--": decr,
-    ">": () => { let a = npop(); let b = npop(); bpush(b > a) },
-    "<": () => { let a = npop(); let b = npop(); bpush(b < a) },
-    ">=": () => { let a = npop(); let b = npop(); bpush(b >= a) },
-    "<=": () => { let a = npop(); let b = npop(); bpush(b <= a) },
-    "==": () => { let a = npop(); let b = npop(); bpush(b === a) },
-    "!=": () => { let a = npop(); let b = npop(); bpush(b !== a) },
+    ">": () => { let a = pop(); let b = pop(); bpush(b > a) },
+    "<": () => { let a = pop(); let b = pop(); bpush(b < a) },
+    ">=": () => { let a = pop(); let b = pop(); bpush(b >= a) },
+    "<=": () => { let a = pop(); let b = pop(); bpush(b <= a) },
+    "==": () => { let a = pop(); let b = pop(); bpush(equals(a, b)) },
+    "!=": () => { let a = pop(); let b = pop(); bpush(b !== a) },
     "&&": () => { let a = npop(); let b = npop(); bpush(b && a) },
     "||": () => { let a = npop(); let b = npop(); bpush(b || a) },
     "!": () => { let a = npop(); bpush(!a) },
@@ -58,8 +75,10 @@ const OPERATIONS = {
     "?:": () => { let a = npop(); let b = npop(); let c = npop(); push(a ? b : c) },
     "if": () => { let a = npop(); let b = lpop(); a ? eval_list(b) : {} },
     "ifelse": () => { let a = npop(); let b = lpop(); let c = lpop(); a ? eval_list(b) : eval_list(c) },
+    "peek": () => { let a = peek(); print(a) },
     "print": () => { let a = pop(); print(a) },
     "exit": () => { process.exit(0); },
+    "die": () => { die(""); },
     "each": () => { let fn = lpop(); let items = lpop(); for (let item of items) { push(item); eval_list(fn) } },
     "while": () => { let a = lpop(); while (true) { eval_list(a); b = npop(); if (!b) break; } },
     "int": int,
@@ -74,6 +93,8 @@ const OPERATIONS = {
     "get": get,
     "nlist": nlist,
     "pop": pop,
+    "?": lookup,
+    "assert": () => { let a = npop(); if (!a) die("Assertion failed"); else trace("Assertion passed") },
 };
 
 let stack = [];
@@ -202,7 +223,8 @@ function parse(code, _i = 0) {
 }
 
 function main(_opts) {
-    let opts = _opts || gprocs.args("--verbose", "infile*");
+    let opts = _opts || gprocs.args("--trace,--verbose", "infile*");
+    if (opts.trace) TRACE = true;
     let code = gfiles.read(opts.infile);
     parse(code);
     let pcode = stack;
@@ -354,7 +376,7 @@ function cdr() {
 function head() {
     let n = npop();
     let list = pop();
-    push(list.slice(n));
+    push(list.slice(0, n));
 }
 
 function tail() {
@@ -401,6 +423,20 @@ function nlist() {
     push(list);
 }
 
+function lookup() {
+    let n = pop();
+    let list = lpop();
+    if (typeof(n) === "number") {
+        let value = list[n];
+        push(value);
+        return;
+    }
+    if (typeof(n) === "string") {
+        let value = list.find(item => typeof(item) === "object" && item[0] === n);
+        push(value);
+        return;
+    }
+}
 if (module.id === ".") {
     return main();
 }
