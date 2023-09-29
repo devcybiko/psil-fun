@@ -1,61 +1,63 @@
-3 a <-
-5 b <-
-a$ b$ +  
-8 == !!
+3 a <- # assign 3 to a
+5 b <- # assign 5 to b
+a$ b$ +  # a + b
+8 == !! # assert a + b == 8
 
 `this is a
-test` .print
+test` .print # print the string
 
-`a` $
-( + ) sum <-
-5 6 sum$$ .peek
-11 == !!
+`a` $ # get the value for the symbol 'a'
+( + ) sum <- # create the function called 'sum' that adds two values from the stack
+5 6 sum$$ .peek # invoke the sum function, and print the head of the stack without popping it
+11 == !! # assert 5 + 6 == 11
 
-0 ( 1 2 3 4 ) sum$ .reduce .peek
+0 ( 1 2 3 4 ) sum$ .reduce .peek # using reduce, sum the values from 1 through 5
 10 == !!
 
-( 1 2 3 4 ) .car .peek
+( 1 2 3 4 ) .car .peek # get the head of the list
 1 == !!
 
-( 1 2 3 4 ) .cdr .peek 
+( 1 2 3 4 ) .cdr .peek  # get the rest of the list
 .spread 
 4 == !!
 3 == !!
 2 == !!
 
-( 1 2 3 4 ) save <-
+( 1 2 3 4 ) save <- # assign the list to the symbol 'save'
 
-save$ .car
+save$ .car # dereference 'save' and get the head of the list
 1 == !!
 
-save$ .cdr
-.spread 
+save$ .cdr # deference 'save' and get the rest of the list
+.spread # spread the list into elements
 4 == !!
 3 == !!
 2 == !!
 
-save$ 2 .head .peek
+save$ 2 .head .peek # get the top two elements of the list
 .spread
 2 == !!
 1 == !!
  
-save$ 2 .tail .peek
+save$ 2 .tail .peek # get the last two elements of the list
 .spread
 4 == !!
 3 == !!
  
-`a` `b` .swap
+`a` `b` .swap # swap the top two elements of the stack
 `a` == !!
 `b` == !!
 
 
-( 1 2 ( `x` `y` ) 3 4 ) 2 .get .cdr .peek
+( 1 2 ( `x` `y` ) 3 4 ) 2 .get  .peek # get (x y) from the middle of the larger list
 .spread
 `y` == !! 
+`x` == !!
 
-( 1 2 3 4 5 6 ) .spread 5 .nlist .swap .pop
+( 1 2 3 4 5 6 ) .spread 5 .nlist .swap .pop # spread the list, create a new list from the bottom 5, dispose of '1'
 ( 2 3 4 5 6 ) == !!
 
+### Do some math...
 1 2 + 3 == !!
 2 3 - 0 1 - == !!
 4 5 * 20 == !!
@@ -64,9 +66,10 @@ save$ 2 .tail .peek
 10 3 // 3 == !!
 10 3 % 1 == !!
 
-( 1 2 3 4 5 ) ( .dup * ) .map 0 .swap ( + ) .reduce
+( 1 2 3 4 5 ) ( .dup * ) .map 0 .swap ( + ) .reduce # map-reduce sum of the squares
 55 == !!
 
+### Check that incr/decr works
 30 foo <-
 45 bar <-
 foo--
@@ -74,24 +77,27 @@ bar++
 foo$ 29 == !!
 bar$ 46 == !!
 
+## Print the values from 45 down to 0
 45 foo <-
 ( foo$ print foo -- foo$ 0 >= ) .while
 foo$ 0 1 - == !!
 
+## double each element of the list and push them onto the stack
 ( 1 2 3 4 5) ( 2 * ) .each
 5 .nlist (2 4 6 8 10)  == !!
 
-`foo` xxx <-
-xxx$$ 0 1 - == !!
+## strange - indirectly access 'foo'
+`foo` xxx <- # assign the name 'foo' to 'xxx'
+xxx$$ 0 1 - == !! # double-eval 'xxx' 'xxx$' -> foo, 'foo$' retrieves -1, (0 1 - ==) compares to -1, and !! asserts they match
 
-( (a A) (b B) (c C) ) upper <-
+( (a A) (b B) (c C) ) upper <- # create a dictionary that converts lower case to upper case
 
-upper$ b @ .dup .print B == !!
+upper$ b @ B == !! # convert 'b' to 'B'
 
-upper$ `upper.psil` .export
-`upper.psil` .import
+upper$ `upper.psil` .export # export the 'upper' dict to 'upper.psil'
+`upper.psil` .import ## import it again
 
-upper 2 @ p == !!
+upper 2 @ p == !!  ### DONT BE FOOLED - the word 'uppper' is a string. 'upper 2 @' extracts the second letter
 
-`this is a test` `test.jnk` .write
-`test.jnk` .read `this is a test` == !!
+`this is a test` `test.jnk` .write  ## write the string to a file
+`test.jnk` .read `this is a test` == !! ## read it back again

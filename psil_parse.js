@@ -34,6 +34,7 @@ class Parser {
             if (SPACES.includes(c)) i++;
             else if (c === NL) i = this.parseNL(code, i);
             else if (c === STRING_DELIMITER) i = this.parseString(code, i);
+            else if (c === "#") i = this.parseComment(code, i);
             else if (c === "(") i = this.startList(code, i);
             else if (c === ")") i = this.endList(code, i);
             else if (c == ".") i = this.parseDotOperator(code, i);
@@ -143,5 +144,17 @@ class Parser {
         this.push(token);
         return i + 1;
     }
+    parseComment(code, _i) {
+        this.log.info("parseComment", code[_i], _i);
+        let i = _i + 1;
+        for (; i < code.length; i++) {
+            let c = code[i];
+            if (c === "\n") break
+        }
+        return i;
+    }
+    
 }
+
+
 module.exports = Parser;
