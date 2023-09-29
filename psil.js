@@ -24,7 +24,6 @@ function main(_opts) {
     let parser = new Parser(log);
     let code = gfiles.read(opts.infile);
     let pcode = parser.parse(code);
-    log.print(".... RUNNING ...")
 
     let ops = new Operators(log);
     ops.eval_list(pcode)

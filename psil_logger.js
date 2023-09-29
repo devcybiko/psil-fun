@@ -5,7 +5,7 @@ class Logger {
         this.line = 1;
         this.DEBUG = false;
         this.INFO = false;
-        this.TRACE = true;
+        this.TRACE = false;
         this.stack = stack;
         this.symbols = symbols || {};
     }
@@ -16,7 +16,7 @@ class Logger {
         if (this.DEBUG) console.log("debug:", this.line, ...arguments);
     }
     trace() {
-        if (this.TRACE) console.log("trace:", this.line, ...arguments);
+        if (this.TRACE) console.error("trace:", this.line, ...arguments);
     }
     print() {
         console.log(...arguments);
