@@ -72,10 +72,10 @@
     - ".map": (a b c) fn -> (A B C) - apply 'fn' to each element of 'list and push resulting list
     - ".car": ((a b c) .car) -> (a)
     - ".cdr": ((a b c) .cdr) -> ((b c))
-    - ".head": ((a b c) .head) -> (a)
-    - ".tail": ((a b c) .tail) -> ((b c))
+    - ".head": (2 (a b c) .head) -> (a b) - pulls the top 'n' elements from a list
+    - ".tail": (2 (a b c) .tail) -> (b c) - pulls the last 'n' elements from a list
     - ".get": (((a A) (b B) (c C)) 'a' .get) -> (A) - treat list as dictionary and dereference
-    - ".nlist": (a b c) 0 .nlist) -> (a) - treat list as array and dereference
+    - ".nlist": (a b c 2 .nlist) -> (a (b c)) - group 'n' things together as a list
 
 - Stack Operators
     - ".": (a .) -> (a a) - duplicate the head of the stack
