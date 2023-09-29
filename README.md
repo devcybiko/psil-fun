@@ -1,6 +1,15 @@
 # psil-fun
 - a reverse-polish stack-based language loosely inspired by Lisp and Forth
 
+## Files
+- test.psil - example PSIL input file
+- psil.js - main code
+- psil_logger.js - logging 
+- psil_ops.js - operators
+- psil_parse.js - parser
+- psil_stack.js - the stack class
+- psil_util.js - utilities
+
 ## Data Types
 - Number (any string that includes only digits and '.')
 - String (any non-number, plus literal strings surrounded by backticks (\`) including whitespace and newlines
