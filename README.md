@@ -10,6 +10,12 @@
 - psil_stack.js - the stack class
 - psil_util.js - utilities
 
+## Running it
+- `./psil.js infile.psil --trace --debug --verbose`
+    - --trace = running commentary on the program sent to stderr
+    - --debug = debugging info sent to stdout
+    - --verbose = dumps the stack and symbol table on exit
+
 ## Data Types
 - Number (any string that includes only digits and '.')
 - String (any non-number, plus literal strings surrounded by backticks (\`) including whitespace and newlines
