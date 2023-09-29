@@ -18,6 +18,11 @@
 - use the assignment operator (<-) to assign values to symbols
 - use the eval operator (\$) to retrieve the value of symbols
 
+## Comments
+- a pound-sign `#` starts a single-line comment
+- all characters up to and including the newline are ignored
+- there is no 'multiline' comment
+- but you can use a multiline string and .pop it off the stack :/
 ## Functions
 - Functions are just a list that is evaluated
 - Such a list can be assigned to a symbol and evaluated with `$$`
